@@ -1,0 +1,53 @@
+{
+    "metal": {
+      "description": "Recyclable material commonly used for cans, tools, and appliances.",
+      "disposal_instructions": "Take to a metal recycling center or place in your curbside recycling if accepted. Make sure to clean off any food residue.",
+      "examples": ["cans", "metal tools", "appliances"]
+    },
+    "paper": {
+      "description": "Used for packaging, printing, and other household items.",
+      "disposal_instructions": "Recycle in curbside recycling bins if clean and dry. Avoid recycling greasy or wet paper.",
+      "examples": ["newspapers", "cardboard", "office paper"]
+    },
+    "plastic": {
+      "description": "Commonly found in packaging, bottles, and household products.",
+      "disposal_instructions": "Check the recycling code to determine recyclability. Rinse before recycling and avoid single-use plastics when possible.",
+      "examples": ["plastic bottles", "plastic bags", "containers"]
+    },
+    "biodegradable": {
+      "description": "Organic waste that decomposes naturally over time.",
+      "disposal_instructions": "Place in compost bins if available or dispose of in green waste bins.",
+      "examples": ["food scraps", "yard waste", "paper towels"]
+    },
+    "cardboard": {
+      "description": "Recyclable material often used in packaging and boxes.",
+      "disposal_instructions": "Flatten boxes and remove any non-paper materials before placing in recycling.",
+      "examples": ["shipping boxes", "cereal boxes"]
+    },
+    "glass": {
+      "description": "Recyclable material used for bottles, jars, and certain containers.",
+      "disposal_instructions": "Rinse out glass items and place in designated glass recycling bins.",
+      "examples": ["glass bottles", "jars", "beverage containers"]
+    },
+    "batteries": {
+      "description": "Contains hazardous chemicals and requires special disposal.",
+      "disposal_instructions": "Take to a hazardous waste facility or battery recycling center. Never dispose of in regular trash.",
+      "examples": ["AA batteries", "lithium batteries", "car batteries"]
+    },
+    "e-waste": {
+      "description": "Electronic waste that includes devices, accessories, and more.",
+      "disposal_instructions": "Take to an e-waste recycling center. Remove any personal data from devices before disposal.",
+      "examples": ["phones", "computers", "televisions"]
+    },
+    "clothes": {
+      "description": "Textile waste from garments and fabric items.",
+      "disposal_instructions": "Donate if in good condition. Recycle through textile recycling programs or repurpose when possible.",
+      "examples": ["t-shirts", "pants", "jackets"]
+    },
+    "light bulb": {
+      "description": "Common household waste that may contain small amounts of hazardous materials.",
+      "disposal_instructions": "Compact fluorescent bulbs should be recycled at designated facilities. LED and incandescent bulbs can be disposed of in regular trash.",
+      "examples": ["CFL bulbs", "LED bulbs", "incandescent bulbs"]
+    }
+  }
+  

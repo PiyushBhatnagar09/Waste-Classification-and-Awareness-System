@@ -1,0 +1,2 @@
+This yolov8 model is trained on 60 images using Roboflow.
+I annotated them on Roboflow.

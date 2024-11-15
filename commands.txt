@@ -1,0 +1,46 @@
+Need 2 servers :-
+
+Need 2 python versions - 3.8.5 and 3.10 
+1st server : (Actual) - in Project folder
+-> make the python 3.8.5 above 3.10 in environment variables to make python 3.8.5 as default
+py -3.8 -m venv myenv 
+myenv\Scripts\activate
+python app.py
+
+2nd server : (Gemini) - in Gemini folder
+py -3.10 -m venv myenv
+myenv\Scripts\activate
+python gemini_model.py
+
+
+-> newsfeed api key - 1a38e49478d446f1816690b31dc12004
+
+NOTE: Running python notebook, on the left side select kernel as python environment-> 3.8.5 and then run cells
+
+
+Roboflow dataset - 
+https://universe.roboflow.com/piyush-bhatnagar-xur76/waste-classification-hz9qg/dataset/1
+
+Roboflow code to integrate dataset - 
+from roboflow import Roboflow
+rf = Roboflow(api_key="bYDXVNmFoQT1UIRyos2n")
+project = rf.workspace("piyush-bhatnagar-xur76").project("waste-classification-hz9qg")
+version = project.version(1)
+dataset = version.download("yolov8")
+                
+yolov8 python notebook - 
+https://colab.research.google.com/drive/1htmAB-jT1AjMfXYHlhaq31ljcHGLn3py#scrollTo=e6m6NFllZ6rO
+
+vgg16 python notebook - 
+https://colab.research.google.com/drive/137n8XUnA1L0TlfwomaTWdc-M5lQicpOp#scrollTo=xiJfS-Wf-l2r&uniqifier=1
+
+Dataset for yolov8 - 
+https://drive.google.com/drive/u/0/folders/1K5LwaN4U_GtEpzJseNLPQpRZJsqGJZpq
+
+Dataset for vgg16 - 
+https://drive.google.com/drive/u/0/folders/1Me9SUnTbm5wpSOEWqM7gnS1SifJZODfE
+
+
+Why we cannot run both python notebooks completely to create new models-
+-> For yolov8 - We need to annotate 6000 images
+-> For vgg16 - We need to run 28 epochs and all alterante epochs take 1hr to run

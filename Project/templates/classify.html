@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Classification using YOLOv8</title>
+    <!-- Bootstrap CSS (optional, for styling) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/footer.css">
+    <style>
+        /* Custom styles for navigation */
+        body {
+            padding-top: 56px; /* Adjusts for fixed navbar height */
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            margin-bottom: 20px;
+        }
+
+        .container {
+            margin-top: 30px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            font-family: 'Georgia', serif; /* Different font style for headings */
+            background-color: #007bff; /* Blue background color */
+            color: white; /* White text color */
+            padding: 10px;
+            border-radius: 5px; /* Rounded corners */
+        }
+
+        p {
+            font-family: 'Arial', sans-serif; /* Sets a clean, modern font */
+            font-size: 16px; /* Adjusts the text size */
+            color: #333333; /* Dark gray color for readability */
+            line-height: 1.6; /* Adds spacing between lines for better readability */
+            margin-top: 10px; /* Adds some space above each paragraph */
+            margin-bottom: 10px; /* Adds space below each paragraph */
+            /* margin-left: 20px; */
+            padding: 5px;
+            font-weight: bold;
+            background-color: beige;
+            border-radius: 5%;
+            display: flex;
+            text-align: center;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .disposal-info {
+            background-color: #f0f8ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .disposal-info:hover {
+            transform: scale(1.02);
+        }
+
+        .disposal-info h3 {
+            font-family: 'Georgia', serif;
+            font-size: 24px;
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+
+        .disposal-info p {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .disposal-info p strong {
+            color: #007bff;
+        }
+
+        .disposal-info .icon {
+            font-size: 30px;
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="/">Waste Classification</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/classify">Classify Waste</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/chat">Chat with AI</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/news">News Feed</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Waste Classification</h1>
+
+        <!-- File Upload Form -->
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="model_type">Select Task:</label>
+                <select class="form-control" name="model_type" required>
+                    <option value="Detection" selected>Detection</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="confidence">Model Confidence:</label>
+                <input type="range" class="form-control-range" name="confidence" min="25" max="100" value="40">
+                <small class="form-text text-muted">Confidence level from 25% to 100%.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="file">Choose an image:</label>
+                <input type="file" class="form-control-file" name="file" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Classify Waste</button>
+        </form>
+
+        <hr>
+
+        <h2>1st Result (from YoloV8 Model)</h2>
+        <div class="row">
+            {% if uploaded_image %}
+            <div class="col">
+                <p>Uploaded Image</p>
+                <img src="{{ uploaded_image }}" alt="Original Image" class="img-fluid" width="100%">
+            </div>
+            {% endif %}
+
+            {% if result_image %}
+            <div class="col">
+                <p>Detected Image</p>
+                <img src="{{ url_for('static', filename='results/detected_image.jpg') }}" alt="Detected Image" class="img-fluid" width="100%">
+            </div>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <h2>2nd Result (from VGG16 Model)</h2>
+        <div class="row">
+            <div class="col">
+                <p>Object Classified as - {{ classification_result }}</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>YOLOv8 vs VGG16</h2>
+        <p style="text-align: left;">YOLOv8 is an advanced model for real-time object detection, known for its high speed and accuracy. In contrast, VGG16 is a more traditional deep learning model, widely used for image classification, with an accuracy of 69.7%.</p>
+        <p style="text-align: left;">YOLOv8's accuracy surpasses that of VGG16, making it more effective for applications requiring fast and precise object detection in real-time.</p>
+
+        <!-- More Details Button -->
+        <button class="btn btn-info more-details-btn" onclick="document.getElementById('more-details').style.display='block'">More Details</button>
+
+        <!-- More Details Section -->
+        <div id="more-details" style="display:none; margin-top:20px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+            <h3 style="font-family: 'Georgia', serif; color: #007bff; font-size: 24px; margin-bottom: 15px;">YOLOv8 Performance metrics curves</h3>
+        
+            <!-- Image gallery with spacing -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <img src="../static/curves/f1_confidence_curve.png" alt="f1_confidence_curve" class="img-fluid rounded shadow-sm">
+                </div>
+                <div class="col-md-4">
+                    <img src="../static/curves/precision_recall_curve.png" alt="precision_recall_curve" class="img-fluid rounded shadow-sm">
+                </div>
+                <div class="col-md-4">
+                    <img src="../static/curves/confusion_matrix.png" alt="confusion_matrix" class="img-fluid rounded shadow-sm">
+                </div>
+            </div>
+        
+            <!-- Text content -->
+            <h3 style="font-family: 'Georgia', serif; color: #28a745; font-size: 22px; margin-top: 30px; margin-bottom: 10px;">
+                VGG16 Accuracy: <span style="font-weight: bold; color: #dc3545;">69.7%</span>
+            </h3>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px;">
+                VGG16 accuracy achieved on the validation set is &nbsp; <b>69.7%</b>. </p>
+            <p style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px; text-align: left;">
+                While this is respectable, it does not match the superior performance of YOLOv8, which is designed for real-time object detection and has significantly higher accuracy and speed in such tasks.
+            </p>
+            
+        </div>
+        
+
+        <hr>
+    </div>
+
+    <div class="container">
+        <h1>Waste Classification and Disposal Guide</h1>
+
+        <!-- Disposal Information for Waste Types -->
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-recycle"></i></span>
+                <h3>Metal</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Recyclable material commonly used for cans, tools, and appliances.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Take to a metal recycling center or place in your curbside recycling if accepted. Clean off any food residue.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-file-alt"></i></span>
+                <h3>Paper</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Commonly recyclable, often used in packaging, printing, and cleaning products.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Place in paper recycling bins. Avoid recycling wet or food-soiled paper.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-prescription-bottle-alt"></i></span>
+                <h3>Plastic</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Synthetic material used in packaging, bottles, and containers.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Recycle in designated plastic bins. Check if your local recycling accepts the specific plastic type.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-seedling"></i></span>
+                <h3>Biodegradable/Organic</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Organic waste such as food scraps and yard waste that decomposes naturally.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Compost if possible. Alternatively, dispose in a green waste bin if available.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-box"></i></span>
+                <h3>Cardboard</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Thick paper material commonly used in packaging and shipping.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Flatten and place in cardboard recycling bins. Keep it dry for better recycling.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-glass-martini-alt"></i></span>
+                <h3>Glass</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Material used for bottles, jars, and certain packaging.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Rinse and recycle in designated glass bins. Avoid breaking before recycling.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-battery-full"></i></span>
+                <h3>Batteries</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Used in various devices, containing hazardous materials.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Recycle at battery collection centers. Do not dispose of in regular trash.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-laptop"></i></span>
+                <h3>E-Waste</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Electronic waste, including old gadgets, appliances, and devices.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Dispose of at e-waste recycling centers. Avoid throwing in regular trash.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-tshirt"></i></span>
+                <h3>Clothes</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Textile waste, including old clothes and fabrics.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Donate if in good condition, or recycle at textile recycling centers.</p>
+        </div>
+
+        <div class="disposal-info">
+            <div class="title-section">
+                <span class="icon"><i class="fas fa-lightbulb"></i></span>
+                <h3>Light Bulbs</h3>
+            </div>
+            <p><strong>Description: &nbsp;</strong> Bulbs used in lighting that may contain hazardous materials.</p>
+            <p><strong>Disposal Instructions: &nbsp;</strong> Recycle at designated collection centers. Avoid breaking before disposal.</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional, for responsive features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
