@@ -17,9 +17,55 @@ python gemini_model.py
 
 NOTE: Running python notebook, on the left side select kernel as python environment-> 3.8.5 and then run cells
 
+Original dataset - 
+https://universe.roboflow.com/new-waste-classification/waste-classification-1-1tyxv/dataset/1
 
-Roboflow dataset - 
+/*
+Dataset Split
+Train Set
+87%
+5312
+Images
+Valid Set
+9%
+520
+Images
+Test Set
+4%
+256
+Images
+Preprocessing
+Auto-Orient: Applied
+Resize: Stretch to 640x640
+Augmentations
+Outputs per training example: 3
+Flip: Horizontal, Vertical
+90° Rotate: Clockwise, Counter-Clockwise, Upside Down
+*/
+
+Roboflow dataset - (my model) 60 images (for learning purposes)
 https://universe.roboflow.com/piyush-bhatnagar-xur76/waste-classification-hz9qg/dataset/1
+
+/*
+Dataset Split
+Train Set
+70%
+42
+Images
+Valid Set
+20%
+12
+Images
+Test Set
+10%
+6
+Images
+Preprocessing
+Auto-Orient: Applied
+Resize: Stretch to 640x640
+Augmentations
+No augmentations were applied.
+*/
 
 Roboflow code to integrate dataset - 
 from roboflow import Roboflow

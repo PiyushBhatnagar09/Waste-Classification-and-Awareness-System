@@ -5,13 +5,15 @@ import settings
 import helper
 import requests  # Import the requests library for API calls
 import smtplib
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import timedelta
+from datetime import timedelta, datetime
 import uuid, io
 import tensorflow as tf
 import numpy as np
+from pymongo import MongoClient
+import config
 
 # import util
 
@@ -19,16 +21,10 @@ app = Flask(__name__)
 model1= None
 model2= None
 
-# helper.load_artifacts()
-
-# Simulated user database (in-memory)
-subscribed_users = {}
-
-NEWS_API_KEY = '1a38e49478d446f1816690b31dc12004'
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
-EMAIL_USERNAME = 'pbpiyush34@gmail.com'
-EMAIL_PASSWORD = 'vgkhbvyqhnucryav'
+# MongoDB Setup
+client = MongoClient(config.MONGO_URI)
+db = client[config.MONGO_DB_NAME]
+users_collection = db[config.MONGO_COLLECTION_NAME]
 
 output_class = ["Batteries", "Clothes", "E-waste", "Glass", "Light Blubs", "Metal", "Organic", "Paper", "Plastic"]
 
@@ -101,7 +97,6 @@ def upload_file():
 
         # Loop over detected boxes and extract the class name for each detected object
         for box in res[0].boxes:
-            print('check3: ', box)
             class_id = int(box.cls[0])  # Extract the class ID
             detected_classes.add(res[0].names[class_id])  # Map class ID to class name
 
@@ -156,7 +151,7 @@ def send_message():
     body = f"Name: {name}\nEmail: {email}\nMessage:\n{message}"
 
     try:
-        send_email(EMAIL_USERNAME, subject, body)
+        send_email(config.EMAIL_USERNAME, subject, body)
         return jsonify({'status': 'success'}), 200
     except Exception as e:
         print(f"Error sending email: {e}")
@@ -167,16 +162,16 @@ def send_message():
 def news_feed():
     today = datetime.today().strftime('%Y-%m-%d')
     last_week = (datetime.today() - timedelta(days=30)).strftime('%Y-%m-%d')
-    url = f'https://newsapi.org/v2/everything?q=waste%20recycling&from={last_week}&to={today}&sortBy=publishedAt&apiKey={NEWS_API_KEY}'
-    
+    url = f'https://newsapi.org/v2/everything?q=waste%20recycling&from={last_week}&to={today}&sortBy=publishedAt&apiKey={config.NEWS_API_KEY}'
+
     try:
         response = requests.get(url)
-        response.raise_for_status()  # This will raise an error if the request fails
+        response.raise_for_status()
         articles = response.json().get('articles', [])
     except requests.exceptions.RequestException as e:
         articles = []
         print(f"Error fetching news: {e}")
-    
+
     return render_template('news.html', articles=articles)
 
 # Subscription route
@@ -185,13 +180,22 @@ def subscribe():
     data = request.json
     email = data['email']
     password = data['password']
+
+    existing_user = users_collection.find_one({"email": email})
+    if existing_user:
+        return jsonify({'message': 'User already subscribed!'}), 400
     
-    # Save user in the in-memory database
-    subscribed_users[email] = {
-        'password': password,
-        'subscribed': True
+    # Save user to MongoDB
+    user_data = {
+        "email": email,
+        "password": password,  # Ideally, hash passwords before storing them
+        "subscribed": True,
+        "subscribed_at": datetime.utcnow()
     }
-    
+    print(user_data)
+    users_collection.insert_one(user_data)
+
+    # Send welcome email
     subject = "Welcome to Our Newsletter!"
     body = (
         "Thank you for subscribing to our newsletter!\n\n"
@@ -200,61 +204,112 @@ def subscribe():
         "Best regards,\n"
         "The Team"
     )
-
     send_email(email, subject, body)
-    
+    print('email sent')
+    send_daily_news()
+    print('news sent')
     return jsonify({'message': 'Subscribed successfully!'}), 200
 
 
 # Unsubscribe route
 @app.route('/unsubscribe/<email>', methods=['GET'])
 def unsubscribe(email):
-    if email in subscribed_users:
-        subscribed_users[email]['subscribed'] = False
-        return 'You have been unsubscribed successfully!'
-    else:
-        return 'User not found.', 404
+    print(email)
+    result = users_collection.update_one({"email": email}, {"$set": {"subscribed": False}})
+    if result.modified_count == 0:
+        return jsonify({"message": "User not found or already unsubscribed."}), 404
+    return jsonify({"message": "You have been unsubscribed successfully!"}), 200
 
 # Function to send daily news email
 def send_daily_news():
     today = datetime.today().strftime('%Y-%m-%d')
     seven_days_ago = (datetime.today() - timedelta(days=30)).strftime('%Y-%m-%d')
-    
-    url = f'https://newsapi.org/v2/everything?q=plastic%20recycling%20metal&from={seven_days_ago}&to={today}&sortBy=publishedAt&apiKey={NEWS_API_KEY}'
+
+    url = f'https://newsapi.org/v2/everything?q=plastic%20recycling%20metal&from={seven_days_ago}&to={today}&sortBy=publishedAt&apiKey={config.NEWS_API_KEY}'
     response = requests.get(url)
     articles = response.json().get('articles', [])
 
-    if articles:
+    # Filter articles that have an image
+    articles_with_images = [article for article in articles if article.get('urlToImage')]
+    if articles_with_images:
         subject = "Weekly Waste Management News"
-        
-        # Create the body with articles from the last 7 days
-        body = "Here are the top waste management news articles from the last 7 days:\n\n"
-        for article in articles[:5]:  # Limit to 5 articles per email
-            body += f"- {article['title']} ({article['publishedAt'][:10]})\n{article['description']}\nRead more: {article['url']}\n\n"
-        
-        body += "Click here to unsubscribe: http://localhost:5000/unsubscribe/{{email}}"
-        
-        # Send emails to subscribed users
-        for email, user_data in subscribed_users.items():
-            if user_data['subscribed']:
-                send_email(email, subject, body)
 
+        # Create the HTML body with articles
+        html_body = """
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 0; }
+                .email-container { max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; }
+                .header { background: #4caf50; color: #ffffff; text-align: center; padding: 20px; font-size: 24px; }
+                .content { padding: 20px; }
+                .article { margin-bottom: 20px; }
+                .article img { max-width: 100%; border-radius: 8px; }
+                .article-title { font-size: 18px; margin: 10px 0; }
+                .article-description { font-size: 14px; color: #555555; }
+                .footer { text-align: center; padding: 10px; background: #f4f4f9; font-size: 12px; color: #999999; }
+                .unsubscribe { color: #0073e6; text-decoration: none; }
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">Weekly Waste Management News</div>
+                <div class="content">
+        """
 
-# Function to send an email
-def send_email(recipient, subject, body):
-    msg = MIMEText(body)
+        # Add articles to the HTML
+        for article in articles_with_images[:5]:  # Limit to 5 articles per email
+            image = article.get('urlToImage', 'https://via.placeholder.com/600x400')
+            html_body += f"""
+                <div class="article">
+                    <img src="{image}" alt="Article Image">
+                    <div class="article-title"><strong>{article['title']}</strong> ({article['publishedAt'][:10]})</div>
+                    <div class="article-description">{article['description']}</div>
+                    <a href="{article['url']}" target="_blank">Read more</a>
+                </div>
+            """
+
+    # Query the collection for subscribed users
+    subscribed_users = users_collection.find({"subscribed": True})
+
+    # Send emails to subscribed users
+    for user_data in subscribed_users:
+        email = user_data.get('email')  # Retrieve the email from the document
+        if email:  # Ensure the email field exists
+            html_body1= html_body
+            # Add footer and unsubscribe link
+            html_body1 += """
+                    </div>
+                    <div class="footer">
+                        You are receiving this email because you subscribed to our newsletter.<br>
+                        <a href="http://localhost:5000/unsubscribe/{0}" class="unsubscribe">Unsubscribe</a>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """.format(email)
+            
+            send_email(email, subject, html_body1)
+
+# Function to send an HTML email
+def send_email(recipient, subject, html_body):
+    msg = MIMEMultipart("alternative")
     msg['Subject'] = subject
-    msg['From'] = EMAIL_USERNAME
+    msg['From'] = config.EMAIL_USERNAME
     msg['To'] = recipient
-    
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_USERNAME, recipient, msg.as_string())
 
+    msg.attach(MIMEText(html_body, "html"))
+
+    with smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT) as server:
+        server.starttls()
+        server.login(config.EMAIL_USERNAME, config.EMAIL_PASSWORD)
+        server.sendmail(config.EMAIL_USERNAME, recipient, msg.as_string())
+
+# Uncomment the scheduler if needed
 # scheduler = BackgroundScheduler()
 # scheduler.add_job(func=send_daily_news, trigger="interval", days=1)
 # scheduler.start()
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # send_daily_news()

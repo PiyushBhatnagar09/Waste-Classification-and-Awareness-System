@@ -1,0 +1,6 @@
+flask
+pillow
+ultralytics
+pafy
+youtube_dl
+tensorflow
