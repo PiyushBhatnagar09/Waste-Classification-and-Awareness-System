@@ -128,7 +128,7 @@ def ask():
     print("User prompt:", user_prompt)
 
     try:
-        response = requests.post(config.MONGO_URI + '/ask', json={"prompt": user_prompt})
+        response = requests.post(config.GEMINI_URL + '/ask', json={"prompt": user_prompt})
         response_data = response.json()
         response_text = response_data.get("answer", "No response received.")
         print("Answer:", response_text)
