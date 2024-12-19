@@ -34,9 +34,9 @@ This project is a web-based waste classification and awareness system that helps
 
 ## Tech Stack
 
-- **Backend**: Flask, Python
+- **Backend**: Flask, Python, MongoDB
 - **Frontend**: HTML5, CSS3, Bootstrap 4, JavaScript
-- **Machine Learning**: YOLOv8 Model for image classification
+- **Machine Learning**: YOLOv8 Model for image classification, Gemini Model for AI Chat Bot
 - **APIs**: News API for fetching waste management news
 - **Email**: SMTP for sending email notifications
 
