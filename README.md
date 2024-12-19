@@ -1,8 +1,8 @@
-# Waste Classification Management System using YOLOv8
+# WasteWise
 
 ## Overview
 
-This project is a web-based waste classification management system that helps users classify waste using the YOLOv8 deep learning model. It provides additional features such as the latest waste management news, a chatbot for user assistance, and a contact form to send feedback via email.
+This project is a web-based waste classification and awareness system that helps users classify waste using the YOLOv8 deep learning model. It provides additional features such as the latest waste management news and subscription option, a chatbot for user assistance, and a contact form to send feedback via email.
 
 ![home_page](https://github.com/user-attachments/assets/3dbc9bd1-7b6d-4f32-bed8-45b969824c1c)
 ![home_page2](https://github.com/user-attachments/assets/dede4213-9627-41c3-961a-623b357d5381)
