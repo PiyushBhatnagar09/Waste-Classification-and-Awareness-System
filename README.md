@@ -29,7 +29,7 @@ This project is a web-based waste classification and awareness system that helps
 ![unsubscribe](https://github.com/user-attachments/assets/a501409f-3b42-4da9-9a14-438253227bee)
 
 - **Contact Form**: Users can send messages and feedback. Admins will receive these messages via email.
-- 
+
 ![contact_form](https://github.com/user-attachments/assets/84b98186-92ee-4f1b-9a7d-620bf6db8474)
 
 ## Tech Stack
