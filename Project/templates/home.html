@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Waste Classification using YOLOv8</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/css/footer.css">
+    <link rel="stylesheet" href="../static/css/navbar.css">
+
+    <script src="https://kit.fontawesome.com/f47311485a.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            padding-top: 60px;
+            /* Adjusts for fixed navbar height */
+            background-color: black;
+            font-family: 'Arial', sans-serif;
+            /* Change font family */
+        }
+
+        .carousel {
+            padding-top: 10px;
+            width: 100%;
+            /* Ensure carousel takes full width */
+            max-height: 450px;
+            /* Fixed height for carousel */
+            overflow: hidden;
+            /* Hide overflow for images */
+        }
+
+        .carousel-item img {
+            width: 100%;
+            /* Ensure the images fill the width */
+            height: auto;
+            /* Maintain aspect ratio */
+            max-height: 450px;
+            /* Fixed height for images */
+            object-fit: contain;
+            /* Cover the area without distortion */
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Dark background for controls */
+            /* border-radius: 50%; Make controls circular */
+        }
+
+        .carousel-indicators li {
+            background-color: #343a40;
+            /* Dark color for indicators */
+            width: 10px;
+            /* Smaller size for indicators */
+            height: 10px;
+            /* Smaller size for indicators */
+        }
+
+        h1,
+        h2 {
+            font-family: 'Georgia', serif;
+            /* Different font style for headings */
+            background-color: #6425f5c0;
+            ;
+            /* Blue background color */
+            background: conic-gradient(#553c9a, #ee4b2b, #00c2cb, #553c9a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* White text color */
+            padding: 10px;
+            border-radius: 5px;
+            /* Rounded corners */
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            font-style: italic;
+            margin: 20px 0;
+            background-color: #078925;
+            /* Green background color */
+            color: white;
+            /* White text color */
+            padding: 15px;
+            /* Add padding for quotes */
+            border-radius: 5px;
+            /* Rounded corners */
+        }
+
+        .info-container {
+            display: flex;
+            /* Use flexbox for alignment */
+            align-items: center;
+            /* Center items vertically */
+            margin: 30px 30px;
+            /* Add vertical spacing */
+            background-color: #e9ecef;
+            /* Light gray background */
+            border-radius: 5px;
+            /* Rounded corners */
+            padding: 15px;
+            /* Add padding */
+        }
+
+        .info-container img {
+            width: 50%;
+            /* Image takes half of the container */
+            border-radius: 5px;
+            /* Rounded corners for images */
+        }
+
+        .info-container .text {
+            padding: 20px;
+            /* Padding for text */
+            flex: 1;
+            /* Take remaining space */
+        }
+
+        .below-heading {
+            font-size: 1.2rem;
+            /* Slightly larger font size */
+            line-height: 1.6;
+            /* Improved line spacing */
+            color: rgb(210, 205, 205);
+            /* Dark gray text color for better readability */
+            margin: 10px 0;
+            /* Vertical margin for spacing */
+            background-color: rgba(0, 123, 255, 0.1);
+            /* Light blue background */
+            border-left: 5px solid #5a21dec0;
+            ;
+            /* Blue left border for emphasis */
+            padding: 10px 15px;
+            /* Padding inside the paragraph */
+            border-radius: 5px;
+            /* Rounded corners */
+        }
+
+        .blockquote {
+            padding: 60px 80px 40px;
+            position: relative;
+        }
+
+        .blockquote p {
+            font-family: "Utopia-italic";
+            font-size: 35px;
+            font-weight: 700px;
+            text-align: center;
+        }
+
+        /*blockquote p::before {
+    content: "\f095"; 
+    font-family: FontAwesome;
+   display: inline-block;
+   padding-right: 6px;
+   vertical-align: middle;
+  font-size: 180px;
+ }*/
+
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
+
+        .otro-blockquote {
+            font-size: 1.4em;
+            width: 65%;
+            margin: 50px auto;
+            font-family: Open Sans;
+            font-style: italic;
+            color: #555555;
+            padding: 1.2em 30px 1.2em 75px;
+            border-left: 8px solid #78C0A8;
+            line-height: 1.6;
+            position: relative;
+            background: #EDEDED;
+        }
+
+        .otro-blockquote::before {
+            font-family: Arial;
+            content: "\201C";
+            color: #78C0A8;
+            font-size: 4em;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+        }
+
+        .otro-blockquote::after {
+            content: '';
+        }
+
+        .otro-blockquote span {
+            display: block;
+            color: #333333;
+            font-style: normal;
+            font-weight: bold;
+            margin-top: 1em;
+        }
+        .left-quote {
+            margin-left: 0px;
+        }
+        .right-quote {
+            margin-left: 40%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">WasteWise</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/classify">Classify Waste</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chat">Chat with AI</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">News Feed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="d-block w-100" src="../static/images/w1.jpg" alt="First slide">
+                <div class="carousel-caption d-none d-md-block">
+                    <!-- <h5>Slider One Item</h5> -->
+                    <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime, nulla, tempore. Deserunt excepturi quas vero.</p> -->
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="../static/images/w2.jpg" alt="First slide">
+                <div class="carousel-caption d-none d-md-block">
+                    <!-- <h5>Slider One Item</h5> -->
+                    <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime, nulla, tempore. Deserunt excepturi quas vero.</p> -->
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="d-block w-100" src="../static/images/w3.jpg" alt="First slide">
+                <div class="carousel-caption d-none d-md-block">
+                    <!-- <h5>Slider One Item</h5> -->
+                    <!-- <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime, nulla, tempore. Deserunt excepturi quas vero.</p> -->
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+
+    <hr />
+
+    <div class="container">
+        <h1>Welcome to Waste Classification using YOLOv8</h1>
+        <p class="below-heading">This application allows you to classify waste using advanced machine learning
+            techniques.</p>
+        <p class="below-heading">Use the navigation bar to classify waste or contact us for more information.</p>
+
+        <br />
+        <blockquote class="otro-blockquote">
+            The greatest threat to our planet is the belief that someone else will save it.
+            <span>Robert Swan</span>
+        </blockquote>
+        <!-- <blockquote class="otro-blockquote right-quote">
+            Look deep into nature, and then you will understand everything better.            
+        <span>Albert Einstein</span>
+        </blockquote> -->
+
+        <!-- Quotes Section -->
+        <!-- <div class="text-center my-4">
+            <div class="quote">“The greatest threat to our planet is the belief that someone else will save it.” –
+                Robert Swan</div>
+            <div class="quote">“Recycling is a way of life, a philosophy.” – Unknown</div>
+            <div class="quote">“Waste is not waste until we waste it.” – Unknown</div>
+            <div class="quote">“Every bit of waste recycled is a step toward a cleaner planet.” – Unknown</div>
+        </div> -->
+
+        <!-- Information Container 1 -->
+        <div class="info-container">
+            <img src="https://blog.integral-system.fr/wp-content/uploads/2020/02/33797061.jpg" alt="Waste Management">
+            <div class="text">
+                <h2>What We Do</h2>
+                <p>Our platform utilizes advanced machine learning techniques to classify waste efficiently, helping
+                    communities manage their waste better and promote recycling efforts. Join us in making a difference
+                    for a cleaner planet!</p>
+            </div>
+        </div>
+
+        <!-- Information Container 2 -->
+        <div class="info-container">
+            <div class="text">
+                <h2>Get Involved</h2>
+                <p>We invite everyone to participate in our waste classification initiative. Whether you are an
+                    individual, a community group, or a business, your involvement can significantly impact reducing
+                    waste and promoting recycling.</p>
+            </div>
+            <img src="https://i.pinimg.com/originals/f3/f2/57/f3f2579156ff73ad68903248d2330b14.jpg" alt="Get Involved">
+        </div>
+    </div>
+
+    <div id="footer-contact" class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p class="text-underline mb-3">Connect with Us</p>
+            <ul class="horizontal-list social-icons mb-3">
+                <li>
+                    <a href="https://www.linkedin.com/in/piyush-bhatnagar-b4b70425b/" class="text-light">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:pbpiyush09@gmail.com" class="text-light">
+                        <i class="fa fa-envelope-o"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/PiyushBhatnagar09" class="text-light">
+                        <i class="fa fa-github"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="mt-3">
+                <small></small>&copy; 2024 Piyush Bhatnagar. All Rights Reserved.</small>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

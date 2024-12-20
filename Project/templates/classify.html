@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Classification using YOLOv8</title>
+    <!-- Bootstrap CSS (optional, for styling) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Dancing Script' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css">
+
+    <link rel="stylesheet" href="../static/css/footer.css">
+    <link rel="stylesheet" href="../static/css/navbar.css">
+
+    <style>
+        /* Custom styles for navigation */
+        body {
+            padding-top: 56px;
+            /* Adjusts for fixed navbar height */
+            background-color: black;
+            font-family: 'Arial', sans-serif;
+
+            /* Change font family */
+        }
+
+        .container1 {
+            /* margin-top: 30px; */
+            /* background-color: #ffffff; */
+            padding: 20px 200px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Georgia', serif;
+            /* Different font style for headings */
+            background-color: #6425f5c0;
+            ;
+            /* Blue background color */
+            background: conic-gradient(#553c9a, #ee4b2b, #00c2cb, #553c9a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* White text color */
+            padding: 10px;
+            border-radius: 5px;
+            /* Rounded corners */
+        }
+
+        p {
+            font-family: 'Arial', sans-serif;
+            /* Sets a clean, modern font */
+            font-size: 16px;
+            /* Adjusts the text size */
+            color: white;
+            /* Dark gray color for readability */
+            line-height: 1.6;
+            /* Adds spacing between lines for better readability */
+            margin-top: 10px;
+            /* Adds some space above each paragraph */
+            margin-bottom: 10px;
+            /* Adds space below each paragraph */
+            /* margin-left: 20px; */
+            padding: 10px;
+            font-weight: bold;
+            background-color: rgba(128, 128, 128, 0.403);
+            display: flex;
+            text-align: center;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .disposal-info {
+            background-color: #f0f8ff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .disposal-info:hover {
+            transform: scale(1.02);
+        }
+
+        .disposal-info h3 {
+            font-family: 'Georgia', serif;
+            font-size: 24px;
+            color: #0056b3;
+            margin-bottom: 10px;
+        }
+        #req-reject-text {
+            font-family: 'Georgia', serif;
+            color: red;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .disposal-info p {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: white;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .disposal-info p strong {
+            color: #007bff;
+        }
+
+        .disposal-info .icon {
+            font-size: 30px;
+            color: #007bff;
+            margin-right: 10px;
+        }
+
+        .title-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-text {
+            color: grey;
+        }
+
+        .text-grey {
+            color: grey;
+        }
+
+        /* CSS */
+        .button-85 {
+            padding: 0.6em 2em;
+            border: none;
+            outline: none;
+            color: rgb(255, 255, 255);
+            background: #111;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .button-85:before {
+            content: "";
+            background: linear-gradient(45deg,
+                    #ff0000,
+                    #ff7300,
+                    #fffb00,
+                    #48ff00,
+                    #00ffd5,
+                    #002bff,
+                    #7a00ff,
+                    #ff00c8,
+                    #ff0000);
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            -webkit-filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing-button-85 20s linear infinite;
+            transition: opacity 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        @keyframes glowing-button-85 {
+            0% {
+                background-position: 0 0;
+            }
+
+            50% {
+                background-position: 400% 0;
+            }
+
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        .button-85:after {
+            z-index: -1;
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #222;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
+
+
+        header {
+            background: url('http://www.autodatz.com/wp-content/uploads/2017/05/Old-Car-Wallpapers-Hd-36-with-Old-Car-Wallpapers-Hd.jpg');
+            text-align: center;
+            width: 100%;
+            height: auto;
+            background-size: cover;
+            background-attachment: fixed;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 85% 85% / 30%;
+        }
+
+        header .overlay {
+            width: 100%;
+            height: 100%;
+            padding: 50px;
+            color: #FFF;
+            text-shadow: 1px 1px 1px #333;
+            background-image: linear-gradient(135deg, #9f05ff69 10%, #fd5e086b 100%);
+
+        }
+
+        .header-heading {
+            font-family: 'Dancing Script';
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+
+        .header-text {
+            font-family: 'Open Sans', sans-serif;
+            margin-bottom: 30px;
+        }
+
+        body {
+            background-color: black;
+        }
+
+
+        .container2 {
+            width: 1200px !important;
+            padding: 0 !important;
+            margin-right: auto;
+            margin-left: auto;
+
+            @media screen and (min-width: 992px) and (max-width: 1439px) {
+                max-width: 1279px !important;
+                padding: 0 !important;
+                margin: 0 80px !important;
+                width: auto !important;
+            }
+
+            @media screen and (max-width: 991px) {
+                max-width: 959px !important;
+                margin: 0 16px !important;
+                padding: 0 !important;
+                width: auto !important;
+            }
+        }
+
+        .gradient-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            padding: 30px;
+
+            @media screen and (max-width: 991px) {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .container-title {
+            text-align: center;
+            padding: 0 !important;
+            margin-bottom: 40px;
+            font-size: 40px;
+            color: #fff;
+            font-weight: 600;
+            line-height: 60px;
+        }
+
+        .card1 {
+            max-width: 550px;
+            border: 0;
+            width: 100%;
+            margin-inline: auto;
+        }
+
+        .container-card {
+            position: relative;
+            border: 2px solid transparent;
+            background: linear-gradient(71deg, #080509, #1a171c, #080509);
+            background-clip: padding-box;
+            border-radius: 45px;
+            padding: 40px;
+
+            img {
+                margin-bottom: 32px;
+            }
+        }
+
+        .bg-green-box,
+        .bg-white-box,
+        .bg-yellow-box,
+        .bg-blue-box {
+            position: relative;
+        }
+
+        .bg-green-box::after,
+        .bg-white-box::after,
+        .bg-yellow-box::after,
+        .bg-blue-box::after {
+            position: absolute;
+            top: -1px;
+            bottom: -1px;
+            left: -1px;
+            right: -1px;
+            content: "";
+            z-index: -1;
+            border-radius: 45px;
+        }
+
+        .bg-green-box::after {
+            background: linear-gradient(71deg, #0d1212, #3da077, #0d1212);
+        }
+
+        .bg-white-box::after {
+            background: linear-gradient(71deg, #121013, #b0afb0, #121013);
+        }
+
+        .bg-yellow-box::after {
+            background: linear-gradient(71deg, #110e0e, #afa220, #110e0e);
+        }
+
+        .bg-blue-box::after {
+            background: linear-gradient(71deg, #0c0a0e, #5f6fad, #0c0a0e);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.02em;
+            line-height: 40px;
+            font-style: normal;
+            font-size: 28px;
+            padding-bottom: 8px;
+            border: 1px solid white;
+            font-style: italic;
+        }
+
+        .card-description {
+            font-weight: 600;
+            line-height: 32px;
+            color: hsla(0, 0%, 100%, 0.5);
+            font-size: 16px;
+            max-width: 470px;
+            border-radius: 5px;
+            font-family: Arial, Helvetica, sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">WasteWise</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/classify">Classify Waste</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chat">Chat with AI</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">News Feed</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container1">
+        <header>
+            <div class="overlay">
+                <span class="header-heading">Waste Classification using YoloV8</span>
+                <h3 class="header-text">Reasons for Choosing US</h3>
+                <span class="header-text">YOLOv8 is an advanced model for real-time object detection, known for its high
+                    speed and accuracy.</span>
+                <br>
+            </div>
+        </header>
+
+        <!-- File Upload Form -->
+        <br />
+        <form id="uploadForm" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="confidence">Choose model confidence</label>
+                <input type="range" class="form-control-range" name="confidence" min="25" max="100" value="40">
+                <small class="form-text">Confidence level from 25% to 100%.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="file">Choose an image</label>
+                <small><input type="file" class="form-control-file" name="file" required></small>
+            </div>
+
+            <br />
+
+            <button type="submit" class="button-85">Classify Waste</button>
+        </form>
+
+        <hr>
+
+        <!-- <h2>1st Result (from YoloV8 Model)</h2> -->
+        <h2>Result</h2>
+        <h4 id="req-reject-text">(Request may be rejected from the backend due to the 512MB limit of the render platform. Kindly visit our <a href="https://github.com/PiyushBhatnagar09/Waste-Wise"  target="_blank">GitHub</a> repository to run the model locally.)</h4>
+        <div class="row">
+            <div class="col">
+                <p>Uploaded Image</p>
+                <img id="uploadedImage" src="https://thumbs.dreamstime.com/b/no-image-available-icon-vector-illustration-flat-design-140476186.jpg" alt="Original Image" class="img-fluid" width="100%">
+            </div>
+
+            <div class="col">
+                <p>Detected Image</p>
+                <img id="resultImage" src="https://thumbs.dreamstime.com/b/no-image-available-icon-vector-illustration-flat-design-140476186.jpg" alt="Detected Image"
+                    class="img-fluid" width="100%">
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- <h2>2nd Result (from VGG16 Model)</h2>
+        <div class="row">
+            <div class="col">
+                <p>Object Classified as - {{ classification_result }}</p>
+            </div>
+        </div> -->
+
+        <h2>About YOLOv8</h2>
+        <p style="text-align: left;">YOLOv8 is an advanced model for real-time object detection, known for its high
+            speed and accuracy.</p>
+        <p style="text-align: left;">YOLOv8's accuracy surpasses other traditional models, making it more effective for
+            applications requiring fast and precise object detection in real-time.</p>
+
+        <!-- More Details Button -->
+        <button class="btn btn-info more-details-btn"
+            onclick="document.getElementById('more-details').style.display='block'">More Details</button>
+
+        <!-- More Details Section -->
+        <div id="more-details"
+            style="display:none; margin-top:20px; background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+            <h3 style="font-family: 'Georgia', serif; color: #007bff; font-size: 24px; margin-bottom: 15px;">YOLOv8
+                Performance metrics curves</h3>
+
+            <!-- Image gallery with spacing -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <img src="../static/curves/f1_confidence_curve.png" alt="f1_confidence_curve"
+                        class="img-fluid rounded shadow-sm">
+                </div>
+                <div class="col-md-4">
+                    <img src="../static/curves/precision_recall_curve.png" alt="precision_recall_curve"
+                        class="img-fluid rounded shadow-sm">
+                </div>
+                <div class="col-md-4">
+                    <img src="../static/curves/confusion_matrix.png" alt="confusion_matrix"
+                        class="img-fluid rounded shadow-sm">
+                </div>
+            </div>
+
+            <!-- Text content -->
+            <!-- <h3
+                style="font-family: 'Georgia', serif; color: #28a745; font-size: 22px; margin-top: 30px; margin-bottom: 10px;">
+                VGG16 Accuracy: <span style="font-weight: bold; color: #dc3545;">69.7%</span>
+            </h3>
+
+            <p style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px;">
+                VGG16 accuracy achieved on the validation set is &nbsp; <b>69.7%</b>. </p>
+            <p
+                style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px; text-align: left;">
+                While this is respectable, it does not match the superior performance of YOLOv8, which is designed for
+                real-time object detection and has significantly higher accuracy and speed in such tasks.
+            </p> -->
+
+        </div>
+
+
+        <hr>
+    </div>
+
+    <!-- Disposal Information for Waste Types -->
+    <div class="container2">
+        <h1>Waste Classification and Disposal Guide</h1>
+
+        <div class="gradient-cards">
+            <div class="card1">
+                <div class="container-card bg-green-box">
+                  <p class="card-title">Metal</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Recyclable material commonly used for cans, tools, and appliances.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Take to a metal recycling center or place in your curbside recycling if accepted. Clean off any food residue.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-white-box">
+                  <p class="card-title">Paper</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Commonly recyclable, often used in packaging, printing, and cleaning products.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Place in paper recycling bins. Avoid recycling wet or food-soiled paper.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-yellow-box">
+                  <p class="card-title">Plastic</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Synthetic material used in packaging, bottles, and containers.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Recycle in designated plastic bins. Check if your local recycling accepts the specific plastic type.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-blue-box">
+                  <p class="card-title">Biodegradable/Organic</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Organic waste such as food scraps and yard waste that decomposes naturally.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Compost if possible. Alternatively, dispose in a green waste bin if available.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-green-box">
+                  <p class="card-title">Cardboard</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Thick paper material commonly used in packaging and shipping.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Flatten and place in cardboard recycling bins. Keep it dry for better recycling.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-white-box">
+                  <p class="card-title">Glass</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Material used for bottles, jars, and certain packaging.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Rinse and recycle in designated glass bins. Avoid breaking before recycling.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-yellow-box">
+                  <p class="card-title">Batteries</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Used in various devices, containing hazardous materials.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Recycle at battery collection centers. Do not dispose of in regular trash.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-blue-box">
+                  <p class="card-title">E-Waste</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Electronic waste, including old gadgets, appliances, and devices.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Dispose of at e-waste recycling centers. Avoid throwing in regular trash.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-green-box">
+                  <p class="card-title">Clothes</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Textile waste, including old clothes and fabrics.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Donate if in good condition, or recycle at textile recycling centers.
+                  </p>
+                </div>
+              </div>
+              
+              <div class="card1">
+                <div class="container-card bg-white-box">
+                  <p class="card-title">Light Bulbs</p>
+                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                    Bulbs used in lighting that may contain hazardous materials.
+                  </p>
+                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                    Recycle at designated collection centers. Avoid breaking before disposal.
+                  </p>
+                </div>
+              </div>
+              
+        </div>
+    </div>
+
+    <!-- Bootstrap JS (optional, for responsive features) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js"></script>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent normal form submission
+
+        let formData = new FormData(this);  // Create FormData object from the form
+        let confidenceValue = document.querySelector('input[name="confidence"]').value;
+        formData.append("confidence", confidenceValue);  // Append confidence level
+
+        // Send data to the server (5001) using fetch
+        new Noty({
+            text: 'Request sent to backend server',
+            type: 'success',
+            timeout: 2000, // 3 seconds
+            layout: 'topRight',
+            theme: 'relax'
+        }).show();
+
+        fetch('https://waste-wise-backend.onrender.com/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())  // Expect JSON response
+        .then(data => {
+            new Noty({
+                text: 'Request executed successfully',
+                type: 'success',
+                timeout: 2000, // 3 seconds
+                layout: 'topRight',
+                theme: 'relax'
+            }).show();
+
+            if (data.status === 'success') {
+                // Replace image URLs with the second server URLs if the response is 200 OK
+                document.getElementById('uploadedImage').src = 'http://127.0.0.1:5001/static/results/original_image.jpg';
+                document.getElementById('resultImage').src = 'http://127.0.0.1:5001/static/results/detected_image.jpg';
+            } else {
+                new Noty({
+                    text: data.error,
+                    type: 'error',
+                    timeout: 2000, // 3 seconds
+                    layout: 'topRight',
+                    theme: 'relax'
+                }).show();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);  // Handle any network errors
+            new Noty({
+                text: error,
+                type: 'error',
+                timeout: 2000, // 3 seconds
+                layout: 'topRight',
+                theme: 'relax'
+            }).show();
+        });
+    });
+    </script>
+</body>
+
+</html>

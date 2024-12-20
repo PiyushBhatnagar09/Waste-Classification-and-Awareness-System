@@ -1,0 +1,5 @@
+Flask==3.1.0
+Flask_Cors==5.0.0
+Pillow==11.0.0
+ultralytics==8.3.52
+gunicorn==22.0.0
