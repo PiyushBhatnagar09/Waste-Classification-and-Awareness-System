@@ -14,6 +14,7 @@
 
     <link rel="stylesheet" href="../static/css/footer.css">
     <link rel="stylesheet" href="../static/css/navbar.css">
+    <script src="https://kit.fontawesome.com/f47311485a.js" crossorigin="anonymous"></script>
 
     <style>
         /* Custom styles for navigation */
@@ -22,6 +23,7 @@
             /* Adjusts for fixed navbar height */
             background-color: black;
             font-family: 'Arial', sans-serif;
+            min-width: 742px;
 
             /* Change font family */
         }
@@ -51,7 +53,7 @@
             /* Rounded corners */
         }
 
-        p {
+        .p-style {
             font-family: 'Arial', sans-serif;
             /* Sets a clean, modern font */
             font-size: 16px;
@@ -438,12 +440,12 @@
         <h4 id="req-reject-text">(Request may be rejected from the backend due to the 512MB limit of the render platform. Kindly visit our <a href="https://github.com/PiyushBhatnagar09/Waste-Wise"  target="_blank">GitHub</a> repository to run the model locally.)</h4>
         <div class="row">
             <div class="col">
-                <p>Uploaded Image</p>
+                <p  class="p-style" class="p-style">Uploaded Image</p>
                 <img id="uploadedImage" src="https://thumbs.dreamstime.com/b/no-image-available-icon-vector-illustration-flat-design-140476186.jpg" alt="Original Image" class="img-fluid" width="100%">
             </div>
 
             <div class="col">
-                <p>Detected Image</p>
+                <p  class="p-style" class="p-style">Detected Image</p>
                 <img id="resultImage" src="https://thumbs.dreamstime.com/b/no-image-available-icon-vector-illustration-flat-design-140476186.jpg" alt="Detected Image"
                     class="img-fluid" width="100%">
             </div>
@@ -454,14 +456,14 @@
         <!-- <h2>2nd Result (from VGG16 Model)</h2>
         <div class="row">
             <div class="col">
-                <p>Object Classified as - {{ classification_result }}</p>
+                <p  class="p-style">Object Classified as - {{ classification_result }}</p>
             </div>
         </div> -->
 
         <h2>About YOLOv8</h2>
-        <p style="text-align: left;">YOLOv8 is an advanced model for real-time object detection, known for its high
+        <p  class="p-style" class="p-style" style="text-align: left;">YOLOv8 is an advanced model for real-time object detection, known for its high
             speed and accuracy.</p>
-        <p style="text-align: left;">YOLOv8's accuracy surpasses other traditional models, making it more effective for
+        <p  class="p-style" class="p-style" style="text-align: left;">YOLOv8's accuracy surpasses other traditional models, making it more effective for
             applications requiring fast and precise object detection in real-time.</p>
 
         <!-- More Details Button -->
@@ -496,9 +498,9 @@
                 VGG16 Accuracy: <span style="font-weight: bold; color: #dc3545;">69.7%</span>
             </h3>
 
-            <p style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px;">
+            <p  class="p-style" style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px;">
                 VGG16 accuracy achieved on the validation set is &nbsp; <b>69.7%</b>. </p>
-            <p
+            <p  class="p-style"
                 style="font-size: 16px; line-height: 1.6; color: #333333; margin-top: 0; margin-bottom: 20px; text-align: left;">
                 While this is respectable, it does not match the superior performance of YOLOv8, which is designed for
                 real-time object detection and has significantly higher accuracy and speed in such tasks.
@@ -517,11 +519,11 @@
         <div class="gradient-cards">
             <div class="card1">
                 <div class="container-card bg-green-box">
-                  <p class="card-title">Metal</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Metal</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Recyclable material commonly used for cans, tools, and appliances.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Take to a metal recycling center or place in your curbside recycling if accepted. Clean off any food residue.
                   </p>
                 </div>
@@ -529,11 +531,11 @@
               
               <div class="card1">
                 <div class="container-card bg-white-box">
-                  <p class="card-title">Paper</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Paper</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Commonly recyclable, often used in packaging, printing, and cleaning products.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Place in paper recycling bins. Avoid recycling wet or food-soiled paper.
                   </p>
                 </div>
@@ -541,11 +543,11 @@
               
               <div class="card1">
                 <div class="container-card bg-yellow-box">
-                  <p class="card-title">Plastic</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Plastic</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Synthetic material used in packaging, bottles, and containers.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Recycle in designated plastic bins. Check if your local recycling accepts the specific plastic type.
                   </p>
                 </div>
@@ -553,11 +555,11 @@
               
               <div class="card1">
                 <div class="container-card bg-blue-box">
-                  <p class="card-title">Biodegradable/Organic</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Biodegradable/Organic</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Organic waste such as food scraps and yard waste that decomposes naturally.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Compost if possible. Alternatively, dispose in a green waste bin if available.
                   </p>
                 </div>
@@ -565,11 +567,11 @@
               
               <div class="card1">
                 <div class="container-card bg-green-box">
-                  <p class="card-title">Cardboard</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Cardboard</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Thick paper material commonly used in packaging and shipping.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Flatten and place in cardboard recycling bins. Keep it dry for better recycling.
                   </p>
                 </div>
@@ -577,11 +579,11 @@
               
               <div class="card1">
                 <div class="container-card bg-white-box">
-                  <p class="card-title">Glass</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Glass</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Material used for bottles, jars, and certain packaging.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Rinse and recycle in designated glass bins. Avoid breaking before recycling.
                   </p>
                 </div>
@@ -589,11 +591,11 @@
               
               <div class="card1">
                 <div class="container-card bg-yellow-box">
-                  <p class="card-title">Batteries</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Batteries</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Used in various devices, containing hazardous materials.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Recycle at battery collection centers. Do not dispose of in regular trash.
                   </p>
                 </div>
@@ -601,11 +603,11 @@
               
               <div class="card1">
                 <div class="container-card bg-blue-box">
-                  <p class="card-title">E-Waste</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">E-Waste</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Electronic waste, including old gadgets, appliances, and devices.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Dispose of at e-waste recycling centers. Avoid throwing in regular trash.
                   </p>
                 </div>
@@ -613,11 +615,11 @@
               
               <div class="card1">
                 <div class="container-card bg-green-box">
-                  <p class="card-title">Clothes</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Clothes</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Textile waste, including old clothes and fabrics.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Donate if in good condition, or recycle at textile recycling centers.
                   </p>
                 </div>
@@ -625,16 +627,43 @@
               
               <div class="card1">
                 <div class="container-card bg-white-box">
-                  <p class="card-title">Light Bulbs</p>
-                  <p class="card-description"><strong>Description: &nbsp;</strong> 
+                  <p  class="p-style" class="card-title">Light Bulbs</p>
+                  <p  class="p-style" class="card-description"><strong>Description: &nbsp;</strong> 
                     Bulbs used in lighting that may contain hazardous materials.
                   </p>
-                  <p class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
+                  <p  class="p-style" class="card-description"><strong>Disposal Instructions: &nbsp;</strong> 
                     Recycle at designated collection centers. Avoid breaking before disposal.
                   </p>
                 </div>
               </div>
               
+        </div>
+    </div>
+
+    <div id="footer-contact" class="bg-dark text-light py-4">
+        <div class="container text-center">
+            <p class="text-underline mb-3">Connect with Us</p>
+            <ul class="horizontal-list social-icons mb-3">
+                <li>
+                    <a href="https://www.linkedin.com/in/piyush-bhatnagar-b4b70425b/" class="text-light">
+                        <i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:pbpiyush09@gmail.com" class="text-light">
+                        <i class="fa fa-envelope-o"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://github.com/PiyushBhatnagar09" class="text-light">
+                        <i class="fa fa-github"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="mt-3">
+                <small></small>&copy; 2024 Piyush Bhatnagar. All Rights Reserved.</small>
+            </div>
         </div>
     </div>
 
